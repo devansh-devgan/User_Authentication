@@ -1,20 +1,25 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../Contexts/auth_context";
+import { useAuth } from "../Contexts/auth_context";
 
 const Home: React.FC = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
-
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
